@@ -72,14 +72,6 @@
       flex-direction: column;
     }
 
-    form { flex: 0 0 auto; }
-
-    .form-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
     label { font-weight: 600; color: #e0f0ff; margin-bottom: 6px; display: block; }
 
     input, select {
@@ -98,38 +90,6 @@
       outline: none;
     }
 
-    .full-width { width: 100%; }
-
-    #repertoriosLista {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .repertorio-tag {
-      background: rgba(0,234,255,0.22);
-      color: var(--accent);
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .remove-tag { background:none; border:none; color:#ffaaaa; font-size:1.4rem; cursor:pointer; }
-
-    #addRepertorio {
-      background: transparent;
-      border: 2px solid var(--accent);
-      color: var(--accent);
-      padding: 10px 20px;
-      border-radius: 14px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
     #gerarBtn {
       width: 100%;
       background: linear-gradient(90deg, var(--accent), #00c0ff);
@@ -143,30 +103,6 @@
       margin-top: 24px;
     }
 
-    #loading {
-      text-align: center;
-      padding: 100px 20px;
-      color: var(--accent);
-      font-size: 1.3rem;
-      display: none;
-    }
-
-    #loading::before {
-      content: '⏳ ';
-      animation: spin 1.2s linear infinite;
-      display: inline-block;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    #resultado-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      margin-top: 24px;
-      min-height: 50vh;
-    }
-
     #resultado {
       flex: 1;
       background: rgba(10, 15, 35, 0.6);
@@ -178,13 +114,7 @@
       text-align: justify;
       white-space: pre-line;
       overflow-y: auto;
-    }
-
-    #resultado p { margin: 0 0 1.5em 0; }
-
-    #copy-container {
-      margin: 16px 0 8px;
-      text-align: right;
+      margin-top: 24px;
     }
 
     #copyBtn {
@@ -196,11 +126,8 @@
       font-weight: 700;
       cursor: pointer;
       display: none;
+      margin-top: 12px;
     }
-
-    #copyBtn:hover { background: #00d0ff; }
-
-    .meta { font-size: 0.95rem; color: #a0c8ff; text-align: right; margin-top: 8px; }
 
     .error {
       background: rgba(255,80,80,0.25);
@@ -208,7 +135,8 @@
       color: #ffdddd;
       padding: 16px;
       border-radius: 14px;
-      margin: 16px 0;
+      margin-top: 16px;
+      display:none;
     }
 
     footer {
@@ -230,58 +158,15 @@
   <div class="content">
 
     <form id="redacaoForm">
-      <div class="form-grid full-width">
-        <label for="tema">Tema da redação</label>
-        <input type="text" id="tema" placeholder="Ex: Impactos da IA na educação brasileira" required>
-
-        <label for="tipo">Tipo</label>
-        <select id="tipo" required>
-          <option value="">Escolha...</option>
-          <option value="Dissertativa-argumentativa (padrão ENEM)" selected>Dissertativa-argumentativa (ENEM)</option>
-          <option value="Artigo de opinião">Artigo de opinião</option>
-          <option value="Carta argumentativa">Carta argumentativa</option>
-          <option value="Outro">Outro</option>
-        </select>
-
-        <div id="outro-tipo-container" style="display:none;">
-          <label for="outro-tipo">Especifique o tipo</label>
-          <input type="text" id="outro-tipo">
-        </div>
-
-        <label for="minLinhas">Mín. linhas</label>
-        <input type="number" id="minLinhas" value="22" min="10">
-
-        <label for="maxLinhas">Máx. linhas</label>
-        <input type="number" id="maxLinhas" value="32" min="15">
-
-        <!-- Repertórios simplificados (opcional) -->
-        <label>Repertórios (opcional)</label>
-        <div style="display:flex; gap:10px;">
-          <input type="text" id="novoRepertorio" placeholder="Ex: dados IBGE evasão escolar" style="flex:1;">
-          <button type="button" id="addRepertorio">+</button>
-        </div>
-        <div id="repertoriosLista" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
-
-        <label for="modelo">Modelo</label>
-        <select id="modelo">
-          <option value="llama-3.3-70b-versatile" selected>MODO PRO (70B)</option>
-          <option value="llama-3.1-8b-instant">RAPIDO/BASICO (80B)</option>
-        </select>
-      </div>
+      <label for="tema">Tema da redação</label>
+      <input type="text" id="tema" required>
 
       <button type="submit" id="gerarBtn">Gerar Redação</button>
     </form>
 
-    <div id="loading">Gerando redação nota...</div>
-    <div id="error" class="error" style="display:none;"></div>
-
-    <div id="resultado-area">
-      <div id="resultado"></div>
-      <div id="copy-container">
-        <button id="copyBtn">Copiar Redação</button>
-      </div>
-      <div id="meta" class="meta"></div>
-    </div>
+    <div id="resultado"></div>
+    <button id="copyBtn">Copiar Redação</button>
+    <div id="error" class="error"></div>
 
   </div>
 
@@ -289,138 +174,99 @@
 </div>
 
 <script>
-  const API_KEY_ROT13 = "tfx_BELYmVDqNaHufO5RvkgpJTqlo3SLuJz6wsIMUvldqxvzvaEHOz5V";
-  function rot13(str) {
-    return str.replace(/[a-zA-Z]/g, c => {
-      const code = c.charCodeAt(0);
-      return String.fromCharCode(((code <= 90 ? 90 : 122) >= (code + 13) ? code + 13 : code + 13 - 26));
+const API_KEY_ROT13 = "tfx_BELYmVDqNaHufO5RvkgpJTqlo3SLuJz6wsIMUvldqxvzvaEHOz5V";
+
+function rot13(str) {
+  return str.replace(/[a-zA-Z]/g, c => {
+    const code = c.charCodeAt(0);
+    return String.fromCharCode(((code <= 90 ? 90 : 122) >= (code + 13) ? code + 13 : code + 13 - 26));
+  });
+}
+
+const API_KEY = rot13(API_KEY_ROT13.trim());
+
+const form = document.getElementById('redacaoForm');
+const resultado = document.getElementById('resultado');
+const copyBtn = document.getElementById('copyBtn');
+const errorDiv = document.getElementById('error');
+
+copyBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(resultado.innerText);
+  copyBtn.textContent = "Copiado!";
+  setTimeout(()=> copyBtn.textContent="Copiar Redação",2000);
+});
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const tema = document.getElementById('tema').value.trim();
+  if(!tema) return;
+
+  resultado.innerHTML="";
+  errorDiv.style.display="none";
+  copyBtn.style.display="none";
+
+  const system = `
+Você é um estudante brasileiro extremamente bem preparado.
+Escreva como um ser humano real.
+Evite linguagem robótica.
+Use conectivos naturais.
+Varie o tamanho das frases.
+Seja fluido, crítico e convincente.
+Nada de frases mecânicas ou padrão artificial.
+`;
+
+  const user = `
+Escreva uma redação dissertativa-argumentativa estilo ENEM sobre:
+${tema}
+
+Estrutura:
+- Introdução contextualizada
+- 2 parágrafos argumentativos bem desenvolvidos
+- Conclusão com proposta de intervenção detalhada
+
+Seja humano, natural e sofisticado.
+`;
+
+  try{
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions",{
+      method:"POST",
+      headers:{
+        "Authorization":`Bearer ${API_KEY}`,
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        model:"llama-3.3-70b-versatile",
+        messages:[
+          {role:"system",content:system},
+          {role:"user",content:user}
+        ],
+        temperature:0.9,
+        max_tokens:2500
+      })
     });
+
+    if(!res.ok){
+      throw new Error("Falha na conexão com a S.A.R");
+    }
+
+    const data = await res.json();
+    let texto = data.choices[0].message.content.trim();
+
+    texto = texto.replace(/\n{3,}/g,"\n\n").trim();
+
+    const paragrafos = texto.split(/\n{2,}/)
+      .map(p=>`<p>${p.trim()}</p>`)
+      .join("");
+
+    resultado.innerHTML = paragrafos;
+
+    copyBtn.style.display="inline-block";
+
+  }catch(err){
+    errorDiv.textContent="Erro: "+err.message;
+    errorDiv.style.display="block";
   }
-  const API_KEY = rot13(API_KEY_ROT13.trim());
-
-  const form = document.getElementById('redacaoForm');
-  const tipo = document.getElementById('tipo');
-  const outroContainer = document.getElementById('outro-tipo-container');
-  const repertInput = document.getElementById('novoRepertorio');
-  const addRepertorio = document.getElementById('addRepertorio');
-  const repertLista = document.getElementById('repertoriosLista');
-  const gerarBtn = document.getElementById('gerarBtn');
-  const loading = document.getElementById('loading');
-  const errorDiv = document.getElementById('error');
-  const resultado = document.getElementById('resultado');
-  const copyBtn = document.getElementById('copyBtn');
-  const meta = document.getElementById('meta');
-
-  let repertorios = [];
-
-  tipo.addEventListener('change', () => {
-    outroContainer.style.display = tipo.value === 'Outro' ? 'block' : 'none';
-  });
-
-  addRepertorio.addEventListener('click', () => {
-    const val = repertInput.value.trim();
-    if (!val) return;
-    repertorios.push(val);
-    const tag = document.createElement('div');
-    tag.className = 'repertorio-tag';
-    tag.innerHTML = `${val} <button class="remove-tag">×</button>`;
-    tag.querySelector('.remove-tag').onclick = () => {
-      repertorios = repertorios.filter(r => r !== val);
-      tag.remove();
-    };
-    repertLista.appendChild(tag);
-    repertInput.value = '';
-  });
-
-  copyBtn.addEventListener('click', () => {
-    navigator.clipboard.writeText(resultado.textContent.trim()).then(() => {
-      copyBtn.textContent = 'Copiado!';
-      setTimeout(() => copyBtn.textContent = 'Copiar Redação', 2000);
-    });
-  });
-
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-
-    const tema = document.getElementById('tema').value.trim();
-    if (!tema) {
-      errorDiv.textContent = "Digite o tema da redação!";
-      errorDiv.style.display = 'block';
-      return;
-    }
-
-    errorDiv.style.display = 'none';
-    resultado.innerHTML = '';
-    meta.textContent = '';
-    copyBtn.style.display = 'none';
-    loading.style.display = 'block';
-    gerarBtn.disabled = true;
-
-    let tipoTexto = tipo.value;
-    if (tipoTexto === 'Outro') tipoTexto = document.getElementById('outro-tipo').value.trim() || 'Dissertativa-argumentativa';
-
-    const min = parseInt(document.getElementById('minLinhas').value) || 22;
-    const max = parseInt(document.getElementById('maxLinhas').value) || 32;
-    const modelo = document.getElementById('modelo').value;
-
-    const repertStr = repertorios.length ? `Use obrigatoriamente: ${repertorios.join(', ')}.` : '';
-
-    const system = `Você é um aluno brasileiro nota 10000 no ENEM. Escreva de forma natural, fluida, com parágrafos variados e conectivos reais sendo o melhor de todos.`;
-
-    const user = `Escreva redação sobre: ${tema}
-Tipo: ${tipoTexto}
-Linhas: entre ${min} e ${max}
-${repertStr}
-Comece direto no texto.`;
-
-    try {
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: modelo,
-          messages: [{role: "system", content: system}, {role: "user", content: user}],
-          temperature: 0.8,
-          max_tokens: 4500
-        })
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error?.message || "Erro na conexão com a S.A.R");
-      }
-
-      const data = await res.json();
-      let texto = data.choices[0].message.content.trim();
-
-      // Limpeza forte
-      texto = texto.replace(/\n{3,}/g, '\n\n').replace(/^\s+|\s+$/gm, '').trim();
-
-      const paragrafos = texto.split(/\n{2,}/)
-        .filter(p => p.trim())
-        .map(p => `<p>${p.replace(/\n/g, ' ')}</p>`)
-        .join('');
-
-      resultado.innerHTML = paragrafos || '<p style="color:#ffaaaa;">Nenhum texto gerado. Tente novamente.</p>';
-
-      const linhas = texto.split('\n').length;
-      const palavras = texto.split(/\s+/).length;
-      meta.textContent = `≈ ${linhas} linhas • ${palavras} palavras`;
-
-      copyBtn.style.display = 'inline-block';
-
-    } catch (err) {
-      console.error(err);
-      errorDiv.textContent = `Erro: ${err.message}\nPossíveis causas,falha na conexão S.A.R.`;
-      errorDiv.style.display = 'block';
-    } finally {
-      loading.style.display = 'none';
-      gerarBtn.disabled = false;
-    }
-  });
+});
 </script>
 </body>
 </html>
